@@ -1,3 +1,33 @@
-[gd_scene format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=3 format=3 uid="uid://cwpteoidg1l0h"]
+
+[ext_resource type="Script" path="res://Code/Parallax.cs" id="1_jclm6"]
+[ext_resource type="Texture2D" uid="uid://dt5r8ecsev40v" path="res://Art/test_bg.png" id="1_yoq7l"]
 
 [node name="Node2D" type="Node2D"]
+
+[node name="BG" type="Node2D" parent="."]
+script = ExtResource("1_jclm6")
+
+[node name="TestBg" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("1_yoq7l")
+hframes = 2
+vframes = 2
+frame = 1
+
+[node name="TestBg2" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("1_yoq7l")
+hframes = 2
+vframes = 2
+frame = 2
+
+[node name="TestBg3" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("1_yoq7l")
+hframes = 2
+vframes = 2
+frame = 3

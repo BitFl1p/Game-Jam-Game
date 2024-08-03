@@ -11,8 +11,17 @@ config_version=5
 [application]
 
 config/name="Game Jam Game"
+run/main_scene="res://Scenes/TestLevel.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=64
+window/size/viewport_height=64
+window/size/mode=2
+window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
 
 [dotnet]
 
