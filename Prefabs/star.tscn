@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://lbxwl5k3frof"]
 
-[ext_resource type="Texture2D" uid="uid://1w5pd056qqrh" path="res://Art/star.png" id="1_p43lb"]
+[ext_resource type="Texture2D" uid="uid://1w5pd056qqrh" path="res://Art/World/star.png" id="1_p43lb"]
 [ext_resource type="Script" path="res://Code/Star.cs" id="2_hb302"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dcb1o"]

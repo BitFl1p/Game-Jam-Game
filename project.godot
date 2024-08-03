@@ -25,6 +25,7 @@ window/size/viewport_height=64
 window/size/mode=2
 window/stretch/mode="viewport"
 window/stretch/scale_mode="integer"
+mouse_cursor/custom_image="res://Art/UI/mouse.png"
 
 [dotnet]
 

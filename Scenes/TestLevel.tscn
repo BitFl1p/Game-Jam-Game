@@ -1,12 +1,17 @@
-[gd_scene load_steps=11 format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=19 format=3 uid="uid://cwpteoidg1l0h"]
 
+[ext_resource type="Texture2D" uid="uid://bkdw258cyt6b7" path="res://Art/UI/mouse.png" id="1_0hc6r"]
 [ext_resource type="Script" path="res://Code/Parallax.cs" id="1_jclm6"]
-[ext_resource type="Texture2D" uid="uid://cd1kelqo128gw" path="res://Art/test_bg.png" id="1_yoq7l"]
+[ext_resource type="Texture2D" uid="uid://cd1kelqo128gw" path="res://Art/World/test_bg.png" id="1_yoq7l"]
+[ext_resource type="Script" path="res://Code/MouseCursor.cs" id="2_sng6t"]
 [ext_resource type="Script" path="res://Code/StarSpawner.cs" id="3_3ri3s"]
-[ext_resource type="Texture2D" uid="uid://bnbntn0w4scc1" path="res://Art/island.png" id="4_my4qc"]
-[ext_resource type="Texture2D" uid="uid://vr16ohjk4ys" path="res://Art/mana_under.png" id="5_g6gkk"]
-[ext_resource type="Texture2D" uid="uid://b81byfl3yiwka" path="res://Art/mana_over.png" id="6_ndnwg"]
-[ext_resource type="Texture2D" uid="uid://b2mrwhcbb6cft" path="res://Art/mana_text.png" id="7_oovo3"]
+[ext_resource type="Texture2D" uid="uid://bnbntn0w4scc1" path="res://Art/World/island.png" id="4_my4qc"]
+[ext_resource type="Texture2D" uid="uid://d0k7js7rbhgam" path="res://Art/Entities/Human.png" id="5_5kmhm"]
+[ext_resource type="Texture2D" uid="uid://vr16ohjk4ys" path="res://Art/UI/mana_under.png" id="5_g6gkk"]
+[ext_resource type="Texture2D" uid="uid://b81byfl3yiwka" path="res://Art/UI/mana_over.png" id="6_ndnwg"]
+[ext_resource type="Script" path="res://Code/ManaBar.cs" id="7_51pfd"]
+[ext_resource type="Script" path="res://Code/Island.cs" id="7_iyyel"]
+[ext_resource type="Texture2D" uid="uid://b2mrwhcbb6cft" path="res://Art/UI/mana_text.png" id="7_oovo3"]
 
 [sub_resource type="Animation" id="Animation_5gaex"]
 resource_name = "Idle"
@@ -46,7 +51,38 @@ _data = {
 "RESET": SubResource("Animation_igmtg")
 }
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_2bpdf"]
+atlas = ExtResource("5_5kmhm")
+region = Rect2(0, 0, 3, 3)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7idpi"]
+atlas = ExtResource("5_5kmhm")
+region = Rect2(0, 3, 3, 3)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_upw3j"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2bpdf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7idpi")
+}],
+"loop": true,
+"name": &"default",
+"speed": 4.0
+}]
+
 [node name="Node2D" type="Node2D"]
+
+[node name="Mouse" type="Sprite2D" parent="."]
+top_level = true
+z_index = 100
+texture_filter = 1
+position = Vector2(30, 26)
+texture = ExtResource("1_0hc6r")
+centered = false
+script = ExtResource("2_sng6t")
 
 [node name="BG" type="Node2D" parent="." node_paths=PackedStringArray("objects")]
 script = ExtResource("1_jclm6")
@@ -100,6 +136,14 @@ texture_filter = 1
 position = Vector2(32, 32)
 texture = ExtResource("4_my4qc")
 centered = false
+script = ExtResource("7_iyyel")
+
+[node name="Human" type="AnimatedSprite2D" parent="AnimationPlayer/Island"]
+position = Vector2(11, 21)
+sprite_frames = SubResource("SpriteFrames_upw3j")
+autoplay = "default"
+frame_progress = 0.989973
+centered = false
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 z_index = 9
@@ -117,6 +161,7 @@ stretch_margin_right = 3
 stretch_margin_bottom = 3
 texture_under = ExtResource("5_g6gkk")
 texture_progress = ExtResource("6_ndnwg")
+script = ExtResource("7_51pfd")
 
 [node name="ManaText" type="Sprite2D" parent="TextureProgressBar"]
 position = Vector2(-1, 0)

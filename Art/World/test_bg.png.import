@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2mrwhcbb6cft"
-path="res://.godot/imported/mana_text.png-bdce00138bcf4c5dba1096b386250136.ctex"
+uid="uid://cd1kelqo128gw"
+path="res://.godot/imported/test_bg.png-30488dc42c3a322416374a810961f9ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/mana_text.png"
-dest_files=["res://.godot/imported/mana_text.png-bdce00138bcf4c5dba1096b386250136.ctex"]
+source_file="res://Art/World/test_bg.png"
+dest_files=["res://.godot/imported/test_bg.png-30488dc42c3a322416374a810961f9ee.ctex"]
 
 [params]
 
