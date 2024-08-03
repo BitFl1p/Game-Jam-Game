@@ -1,12 +1,59 @@
-[gd_scene load_steps=3 format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=11 format=3 uid="uid://cwpteoidg1l0h"]
 
 [ext_resource type="Script" path="res://Code/Parallax.cs" id="1_jclm6"]
-[ext_resource type="Texture2D" uid="uid://dt5r8ecsev40v" path="res://Art/test_bg.png" id="1_yoq7l"]
+[ext_resource type="Texture2D" uid="uid://cd1kelqo128gw" path="res://Art/test_bg.png" id="1_yoq7l"]
+[ext_resource type="Script" path="res://Code/StarSpawner.cs" id="3_3ri3s"]
+[ext_resource type="Texture2D" uid="uid://bnbntn0w4scc1" path="res://Art/island.png" id="4_my4qc"]
+[ext_resource type="Texture2D" uid="uid://vr16ohjk4ys" path="res://Art/mana_under.png" id="5_g6gkk"]
+[ext_resource type="Texture2D" uid="uid://b81byfl3yiwka" path="res://Art/mana_over.png" id="6_ndnwg"]
+[ext_resource type="Texture2D" uid="uid://b2mrwhcbb6cft" path="res://Art/mana_text.png" id="7_oovo3"]
+
+[sub_resource type="Animation" id="Animation_5gaex"]
+resource_name = "Idle"
+length = 4.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimationPlayer/Island:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2, 4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(4, 8), Vector2(4, 6), Vector2(4, 8)]
+}
+
+[sub_resource type="Animation" id="Animation_igmtg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimationPlayer/Island:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(32, 32)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1bfvb"]
+_data = {
+"Idle": SubResource("Animation_5gaex"),
+"RESET": SubResource("Animation_igmtg")
+}
 
 [node name="Node2D" type="Node2D"]
 
-[node name="BG" type="Node2D" parent="."]
+[node name="BG" type="Node2D" parent="." node_paths=PackedStringArray("objects")]
 script = ExtResource("1_jclm6")
+attenuation = 0.1
+contrast = 0.2
+offset = Vector2(32, 32)
+objects = [NodePath("TestBg"), NodePath("TestBg2"), NodePath("TestBg3")]
 
 [node name="TestBg" type="Sprite2D" parent="BG"]
 texture_filter = 1
@@ -15,6 +62,9 @@ texture = ExtResource("1_yoq7l")
 hframes = 2
 vframes = 2
 frame = 1
+script = ExtResource("3_3ri3s")
+baseTime = 1.0
+deviation = 2.0
 
 [node name="TestBg2" type="Sprite2D" parent="BG"]
 texture_filter = 1
@@ -23,6 +73,9 @@ texture = ExtResource("1_yoq7l")
 hframes = 2
 vframes = 2
 frame = 2
+script = ExtResource("3_3ri3s")
+baseTime = 1.0
+deviation = 2.0
 
 [node name="TestBg3" type="Sprite2D" parent="BG"]
 texture_filter = 1
@@ -31,3 +84,41 @@ texture = ExtResource("1_yoq7l")
 hframes = 2
 vframes = 2
 frame = 3
+script = ExtResource("3_3ri3s")
+baseTime = 1.0
+deviation = 2.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1bfvb")
+}
+autoplay = "Idle"
+
+[node name="Island" type="Sprite2D" parent="AnimationPlayer"]
+z_index = 10
+texture_filter = 1
+position = Vector2(32, 32)
+texture = ExtResource("4_my4qc")
+centered = false
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+z_index = 9
+texture_filter = 1
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 63.0
+offset_bottom = 10.0
+value = 100.0
+rounded = true
+nine_patch_stretch = true
+stretch_margin_left = 3
+stretch_margin_top = 3
+stretch_margin_right = 3
+stretch_margin_bottom = 3
+texture_under = ExtResource("5_g6gkk")
+texture_progress = ExtResource("6_ndnwg")
+
+[node name="ManaText" type="Sprite2D" parent="TextureProgressBar"]
+position = Vector2(-1, 0)
+texture = ExtResource("7_oovo3")
+centered = false

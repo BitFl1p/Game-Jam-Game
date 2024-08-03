@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b6et7qaepniho"
-path="res://.godot/imported/axulart-32-color-palette-1x.png-3676dfe35cd0fbd201dbe2a2fa7645f3.ctex"
+uid="uid://1w5pd056qqrh"
+path="res://.godot/imported/star.png-7953868fbd7392e6e06ff69587708912.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Art/axulart-32-color-palette-1x.png"
-dest_files=["res://.godot/imported/axulart-32-color-palette-1x.png-3676dfe35cd0fbd201dbe2a2fa7645f3.ctex"]
+source_file="res://Art/star.png"
+dest_files=["res://.godot/imported/star.png-7953868fbd7392e6e06ff69587708912.ctex"]
 
 [params]
 
