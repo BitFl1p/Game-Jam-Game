@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=20 format=3 uid="uid://cwpteoidg1l0h"]
 
 [ext_resource type="Texture2D" uid="uid://bkdw258cyt6b7" path="res://Art/UI/mouse.png" id="1_0hc6r"]
 [ext_resource type="Script" path="res://Code/Parallax.cs" id="1_jclm6"]
@@ -21,7 +21,7 @@ tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/path = NodePath("AnimationPlayer/Island:position")
-tracks/0/interp = 2
+tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 2, 4),
@@ -35,20 +35,36 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationPlayer/Island:position")
+tracks/0/path = NodePath("AnimationPlayer/ColorRect2:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(32, 32)]
+"values": [Color(0.105882, 0.113725, 0.203922, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_o3ks2"]
+resource_name = "load_in"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimationPlayer/ColorRect2:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.105882, 0.113725, 0.203922, 1), Color(0.105882, 0.113725, 0.203922, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1bfvb"]
 _data = {
 "Idle": SubResource("Animation_5gaex"),
-"RESET": SubResource("Animation_igmtg")
+"RESET": SubResource("Animation_igmtg"),
+"load_in": SubResource("Animation_o3ks2")
 }
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2bpdf"]
@@ -133,7 +149,7 @@ autoplay = "Idle"
 [node name="Island" type="Sprite2D" parent="AnimationPlayer"]
 z_index = 10
 texture_filter = 1
-position = Vector2(32, 32)
+position = Vector2(4, 8)
 texture = ExtResource("4_my4qc")
 centered = false
 script = ExtResource("7_iyyel")
@@ -144,6 +160,18 @@ sprite_frames = SubResource("SpriteFrames_upw3j")
 autoplay = "default"
 frame_progress = 0.989973
 centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimationPlayer"]
+libraries = {
+"": SubResource("AnimationLibrary_1bfvb")
+}
+autoplay = "load_in"
+
+[node name="ColorRect2" type="ColorRect" parent="AnimationPlayer/AnimationPlayer"]
+z_index = 100
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0.105882, 0.113725, 0.203922, 1)
 
 [node name="TextureProgressBar" type="TextureProgressBar" parent="."]
 z_index = 9
