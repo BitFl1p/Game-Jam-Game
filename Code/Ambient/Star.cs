@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class Star : AnimatedSprite2D {
   [Export] private double timer;

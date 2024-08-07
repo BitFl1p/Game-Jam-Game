@@ -13,32 +13,28 @@ public partial class Island : Sprite2D {
   private Image image;
   private RandomNumberGenerator random = new();
   private byte[] tilemap = new byte[53 * 36];
-  [Export] private float tickRate = 0.25f;
-  private float tick;
-
-  [Signal] public delegate void TickEventHandler();
   public override void _Ready() {
     image = Texture.GetImage();
     random.Randomize();
-
+    
     Array.Fill(tilemap, (byte)1);
     tilemap[355] = 2;
     tilemap[356] = 3;
-  }
-  public override void _Process(double delta) {
-    tick -= (float)delta;
-    
-    if (tick > 0) return;
 
-    EmitSignal(SignalName.Tick);
+    PlayerMaster.Tick += OnTick;
+  }
+  private void OnTick() {
     tilemap = HandleTilemapLogic();
     RedrawPixels();
-    tick = tickRate;
   }
 
+  #region TileLogic
   private byte[] GrassLogic(int x, int y) {
-    byte[] temp = new byte[9];
-    Array.Fill(temp, (byte)0);
+    byte[] temp = {
+      0,0,0,
+      0,0,0,
+      0,0,0
+    };
     byte dirt = 0, grass = 0;
     for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
       if (dirt > 2 && random.RandiRange(0, 4) == 0) temp[4] = (byte)PixelType.DIRT;
@@ -60,8 +56,11 @@ public partial class Island : Sprite2D {
   }
   
   private byte[] TallGrassLogic(int x, int y) {
-    byte[] temp = new byte[9];
-    Array.Fill(temp, (byte)0);
+    byte[] temp = {
+      0,0,0,
+      0,0,0,
+      0,0,0
+    };
     byte dirt = 0;
     
     for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
@@ -84,9 +83,11 @@ public partial class Island : Sprite2D {
   private byte[] HandlePixelLogic(int x, int y) => tilemap[53 * y + x] switch {
     (byte)PixelType.GRASS => GrassLogic(x, y),
     (byte)PixelType.TALL_GRASS => TallGrassLogic(x, y),
-    _ => new byte[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    _ => new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
   };
-  
+  #endregion
+
+  #region TilemapHandling
   private byte[] HandleTilemapLogic() {
     byte[] newMap = tilemap;
     for(int x = 0; x <= 52; x++) for(int y = 0; y <= 35; y++) switch (x, y) {
@@ -105,7 +106,7 @@ public partial class Island : Sprite2D {
     for(int x = 2; x <= 53; x++) for(int y = 1; y <= 36; y++) switch (x, y) {
       case (2, 1): case(2,36): case(53, 1): case(53, 36): break;
       
-      case var (a, b) when y == 36 || (y == 35 && x is 2 or 53): 
+      case var _ when y == 36 || (y == 35 && x is 2 or 53): 
         image.SetPixel(x, y, FindPixelColor(tilemap[53 * (y-1) + (x-2)]) / 1.5f + new Color(0,0,0,255)); 
         break;
       
@@ -125,5 +126,7 @@ public partial class Island : Sprite2D {
     (byte)PixelType.TALL_GRASS => new Color(0x2a8379ff),
     _ => new Color(0x00000000)
   };
+  #endregion
+  
 }
 

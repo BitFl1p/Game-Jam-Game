@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://bs4vdmwyvj7jk"]
+
+[ext_resource type="Texture2D" uid="uid://wm1ex3ef2740" path="res://Art/Cards/cards.png" id="1_seevt"]
+
+[node name="TestMini" type="Sprite2D"]
+z_index = 20
+position = Vector2(57, 64)
+texture = ExtResource("1_seevt")
+hframes = 2

@@ -1,17 +1,22 @@
-[gd_scene load_steps=20 format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=25 format=3 uid="uid://cwpteoidg1l0h"]
 
 [ext_resource type="Texture2D" uid="uid://bkdw258cyt6b7" path="res://Art/UI/mouse.png" id="1_0hc6r"]
-[ext_resource type="Script" path="res://Code/Parallax.cs" id="1_jclm6"]
+[ext_resource type="Script" path="res://Code/Ambient/Parallax.cs" id="1_jclm6"]
 [ext_resource type="Texture2D" uid="uid://cd1kelqo128gw" path="res://Art/World/test_bg.png" id="1_yoq7l"]
-[ext_resource type="Script" path="res://Code/MouseCursor.cs" id="2_sng6t"]
-[ext_resource type="Script" path="res://Code/StarSpawner.cs" id="3_3ri3s"]
+[ext_resource type="Script" path="res://Code/UI/MouseCursor.cs" id="2_sng6t"]
+[ext_resource type="Script" path="res://Code/Ambient/StarSpawner.cs" id="3_3ri3s"]
 [ext_resource type="Texture2D" uid="uid://bnbntn0w4scc1" path="res://Art/World/island.png" id="4_my4qc"]
 [ext_resource type="Texture2D" uid="uid://d0k7js7rbhgam" path="res://Art/Entities/Human.png" id="5_5kmhm"]
 [ext_resource type="Texture2D" uid="uid://vr16ohjk4ys" path="res://Art/UI/mana_under.png" id="5_g6gkk"]
+[ext_resource type="PackedScene" uid="uid://bs4vdmwyvj7jk" path="res://Prefabs/card.tscn" id="5_ppor0"]
 [ext_resource type="Texture2D" uid="uid://b81byfl3yiwka" path="res://Art/UI/mana_over.png" id="6_ndnwg"]
-[ext_resource type="Script" path="res://Code/ManaBar.cs" id="7_51pfd"]
-[ext_resource type="Script" path="res://Code/Island.cs" id="7_iyyel"]
+[ext_resource type="Script" path="res://Code/UI/ManaBar.cs" id="7_51pfd"]
+[ext_resource type="Script" path="res://Code/Gameplay/PlayerMaster.cs" id="7_hoyye"]
+[ext_resource type="Script" path="res://Code/Backbone/Island.cs" id="7_iyyel"]
 [ext_resource type="Texture2D" uid="uid://b2mrwhcbb6cft" path="res://Art/UI/mana_text.png" id="7_oovo3"]
+[ext_resource type="Texture2D" uid="uid://bt8veoi3xeypa" path="res://Art/UI/panel.png" id="15_pcbhk"]
+[ext_resource type="Script" path="res://Code/UI/TimePanel.cs" id="16_2r7kj"]
+[ext_resource type="Texture2D" uid="uid://dkksglsfc4jdr" path="res://Art/UI/playButtons.png" id="17_bbl8m"]
 
 [sub_resource type="Animation" id="Animation_5gaex"]
 resource_name = "Idle"
@@ -20,7 +25,7 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationPlayer/Island:position")
+tracks/0/path = NodePath("Player/AnimationPlayer/Island:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -35,7 +40,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationPlayer/ColorRect2:color")
+tracks/0/path = NodePath("../../AnimationPlayer2/ColorRect2:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -50,7 +55,7 @@ resource_name = "load_in"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimationPlayer/ColorRect2:color")
+tracks/0/path = NodePath("../../AnimationPlayer2/ColorRect2:color")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -90,15 +95,8 @@ animations = [{
 }]
 
 [node name="Node2D" type="Node2D"]
-
-[node name="Mouse" type="Sprite2D" parent="."]
-top_level = true
-z_index = 100
 texture_filter = 1
-position = Vector2(30, 26)
-texture = ExtResource("1_0hc6r")
-centered = false
-script = ExtResource("2_sng6t")
+texture_repeat = 1
 
 [node name="BG" type="Node2D" parent="." node_paths=PackedStringArray("objects")]
 script = ExtResource("1_jclm6")
@@ -140,40 +138,38 @@ script = ExtResource("3_3ri3s")
 baseTime = 1.0
 deviation = 2.0
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_1bfvb")
-}
-autoplay = "Idle"
-
-[node name="Island" type="Sprite2D" parent="AnimationPlayer"]
-z_index = 10
-texture_filter = 1
-position = Vector2(4, 8)
-texture = ExtResource("4_my4qc")
-centered = false
-script = ExtResource("7_iyyel")
-
-[node name="Human" type="AnimatedSprite2D" parent="AnimationPlayer/Island"]
-position = Vector2(11, 21)
-sprite_frames = SubResource("SpriteFrames_upw3j")
-autoplay = "default"
-frame_progress = 0.989973
-centered = false
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimationPlayer"]
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Player/AnimationPlayer")
 libraries = {
 "": SubResource("AnimationLibrary_1bfvb")
 }
 autoplay = "load_in"
 
-[node name="ColorRect2" type="ColorRect" parent="AnimationPlayer/AnimationPlayer"]
+[node name="ColorRect2" type="ColorRect" parent="AnimationPlayer2"]
 z_index = 100
 offset_right = 64.0
 offset_bottom = 64.0
 color = Color(0.105882, 0.113725, 0.203922, 1)
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+[node name="Player" type="Node2D" parent="." node_paths=PackedStringArray("manaBar", "island")]
+script = ExtResource("7_hoyye")
+maxMana = 100
+baseManaRegen = 1
+manaBar = NodePath("TextureProgressBar")
+island = NodePath("AnimationPlayer/Island")
+cardPrefab = ExtResource("5_ppor0")
+tickRate = 0.5
+
+[node name="Mouse" type="Sprite2D" parent="Player"]
+top_level = true
+z_index = 100
+texture_filter = 1
+position = Vector2(30, 26)
+texture = ExtResource("1_0hc6r")
+centered = false
+script = ExtResource("2_sng6t")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Player"]
 z_index = 9
 texture_filter = 1
 offset_left = 1.0
@@ -191,7 +187,61 @@ texture_under = ExtResource("5_g6gkk")
 texture_progress = ExtResource("6_ndnwg")
 script = ExtResource("7_51pfd")
 
-[node name="ManaText" type="Sprite2D" parent="TextureProgressBar"]
+[node name="ManaText" type="Sprite2D" parent="Player/TextureProgressBar"]
 position = Vector2(-1, 0)
 texture = ExtResource("7_oovo3")
 centered = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_1bfvb")
+}
+autoplay = "Idle"
+
+[node name="Island" type="Sprite2D" parent="Player/AnimationPlayer"]
+z_index = 10
+texture_filter = 1
+position = Vector2(4, 7.7)
+texture = ExtResource("4_my4qc")
+centered = false
+script = ExtResource("7_iyyel")
+
+[node name="Human" type="AnimatedSprite2D" parent="Player/AnimationPlayer/Island"]
+position = Vector2(11, 21)
+sprite_frames = SubResource("SpriteFrames_upw3j")
+autoplay = "default"
+frame_progress = 0.989973
+centered = false
+
+[node name="Panel" type="Sprite2D" parent="." node_paths=PackedStringArray("pause", "play", "fastForward")]
+z_index = 15
+position = Vector2(9, 4)
+texture = ExtResource("15_pcbhk")
+script = ExtResource("16_2r7kj")
+pause = NodePath("Pause")
+play = NodePath("Play")
+fastForward = NodePath("FastForward")
+
+[node name="Pause" type="Sprite2D" parent="Panel"]
+position = Vector2(-9, -3)
+texture = ExtResource("17_bbl8m")
+centered = false
+hframes = 2
+vframes = 2
+frame = 1
+
+[node name="Play" type="Sprite2D" parent="Panel"]
+position = Vector2(-2, -3)
+texture = ExtResource("17_bbl8m")
+centered = false
+hframes = 2
+vframes = 2
+
+[node name="FastForward" type="Sprite2D" parent="Panel"]
+position = Vector2(5, -3)
+texture = ExtResource("17_bbl8m")
+centered = false
+hframes = 2
+vframes = 2
+frame = 2
