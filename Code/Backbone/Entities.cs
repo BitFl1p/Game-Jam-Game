@@ -7,7 +7,11 @@ public interface IPlaceable {
 }
 
 
-public abstract class Mob : IPlaceable {
+public abstract partial class Mob : Node2D, IPlaceable {
+  
+  public Vector2I islandOffset = new(3, 2);
+  public Vector2I islandPos = new(1, 2);
+  
   public abstract bool Place(Vector2 position);
   public abstract void Ai();
 }
@@ -47,6 +51,7 @@ public abstract class Card : ICard {
     while (amount > 0) {
       tcs = new TaskCompletionSource<Vector2>();
       Vector2 pos = await tcs.Task;
+      if(pos is not {X: > 7 and < 57, Y: > 10 and < 44}) continue;
       if (!toPlace.Place(pos)) return false;
       amount--;
     }

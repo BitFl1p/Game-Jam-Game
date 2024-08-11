@@ -9,7 +9,7 @@ public class TestCard : Card {
   }
  
   public override async Task<bool> Play() {
-    if (!await PlaceMode(new Human(), 5)) return false;
+    if (!await PlaceMode(new Tree(), 5)) return false;
     player.UseMana(ManaCost);
     return true;
   }

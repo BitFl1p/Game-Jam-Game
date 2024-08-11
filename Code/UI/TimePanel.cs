@@ -34,9 +34,7 @@ public partial class TimePanel : Node2D {
       break;
     }
   }
-  
-
   public override void _Process(double delta) {
-    Position = Position.Lerp(mousePos is { X: < 25, Y: < 5 } ? new Vector2(10, 4) : new Vector2(10, -5), PlayerMaster.Instance.animSpeed);
+    Position = Position.Lerp(mousePos is { X: < 25, Y: < 5 } ? new Vector2(10, 4) : new Vector2(10, -10), PlayerMaster.Instance.animSpeed);
   }
 }

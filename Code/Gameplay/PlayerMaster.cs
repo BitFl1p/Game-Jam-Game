@@ -13,21 +13,22 @@ public partial class PlayerMaster : Node2D {
   [Export] private int maxMana, mana, baseManaRegen;
   [Export] private TextureProgressBar manaBar;
   [Export] public float animSpeed = .1f;
-  [Export] private Island island;
+  [Export] public Island island;
   [Export] private PackedScene cardPrefab;
   [Export] private RichTextLabel manaText;
   [Export] private DeckVisual deckVisual;
+  [Export] private TimePanel timePanel;
   public Mode playMode;
   private readonly List<Card> hand = new();
   private readonly List<CardVisual> cardVisuals = new();
   private List<Card> deck;
-  private readonly List<Mob> currentMobs = new();
+  public readonly List<Mob> currentMobs = new();
   private byte selectedCard;
-  public static event Action<Vector2> MouseClick;
   private Vector2 mousePos;
   
   #region Singleton
   public static PlayerMaster Instance { get; private set; }
+  public static Action<Vector2> MouseClick;
   public override void _Ready() {
     if (Instance is not null) QueueFree();
     else Instance = this;
@@ -36,7 +37,7 @@ public partial class PlayerMaster : Node2D {
     rand.Randomize();
 
     deck = new List<Card> {new TestCard()};
-    
+    timePanel.Speed = 0;
     Tick += OnTick;
   }
   #endregion
@@ -85,7 +86,7 @@ public partial class PlayerMaster : Node2D {
     if(playMode == Mode.IDLE) selectedCard = 255;
 
     deckVisual.mana = hand.Count;
-    if (mousePos is { X: > 56, Y: > 45 }) {
+    if (mousePos is { X: > 56, Y: > 45 } && playMode == Mode.IDLE) {
       selectedCard = 6;
       deckVisual.Position = deckVisual.Position.Lerp(new Vector2(44, 39), animSpeed);
     }
@@ -114,14 +115,15 @@ public partial class PlayerMaster : Node2D {
   
   public override async void _Input(InputEvent @event) {
     switch (@event) {
-      case InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left } mouseClick:
-        MouseClick?.Invoke(mouseClick.Position);
-        if (selectedCard == 6 && playMode == Mode.IDLE && hand.Count < 5 && mana >= hand.Count) {
+      case InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left } mouse:
+        MouseClick?.Invoke(mouse.Position);
+        if (selectedCard == 255 || playMode != Mode.IDLE) return;
+        if (selectedCard == 6 && hand.Count < 5 && mana >= hand.Count) {
           mana -= hand.Count;
           AddCard(deck[rand.RandiRange(0, deck.Count - 1)]);
           selectedCard = 255;
         }
-        else if (selectedCard != 255 && playMode == Mode.IDLE) if (hand[selectedCard].ManaCost <= mana && await hand[selectedCard].Play()) {
+        else if (hand[selectedCard].ManaCost <= mana && await hand[selectedCard].Play()) {
           RemoveCard(selectedCard);
           selectedCard = 255;
         }
@@ -147,6 +149,7 @@ public partial class PlayerMaster : Node2D {
   
   private void OnTick() {
     mana += mana >= maxMana ? 0 : baseManaRegen;
+    //foreach (Mob mob in currentMobs) 
   }
   
 }
