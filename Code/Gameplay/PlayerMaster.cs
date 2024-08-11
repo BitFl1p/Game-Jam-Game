@@ -8,17 +8,21 @@ public partial class PlayerMaster : Node2D {
   public enum Mode : byte {
     IDLE, PLACING
   }
-  
+
+  private RandomNumberGenerator rand = new();
   [Export] private int maxMana, mana, baseManaRegen;
   [Export] private TextureProgressBar manaBar;
   [Export] public float animSpeed = .1f;
   [Export] private Island island;
   [Export] private PackedScene cardPrefab;
+  [Export] private RichTextLabel manaText;
+  [Export] private DeckVisual deckVisual;
   public Mode playMode;
   private readonly List<Card> hand = new();
-  private readonly List<Sprite2D> cardVisuals = new();
-  private readonly List<Card> deck = new();
+  private readonly List<CardVisual> cardVisuals = new();
+  private List<Card> deck;
   private readonly List<Mob> currentMobs = new();
+  private byte selectedCard;
   public static event Action<Vector2> MouseClick;
   private Vector2 mousePos;
   
@@ -28,12 +32,10 @@ public partial class PlayerMaster : Node2D {
     if (Instance is not null) QueueFree();
     else Instance = this;
     
-    hand.Add(new TestCard());
-    hand.Add(new TestCard());
-    hand.Add(new TestCard());
-    hand.Add(new TestCard());
-    hand.Add(new TestCard());
     InitialiseCards();
+    rand.Randomize();
+
+    deck = new List<Card> {new TestCard()};
     
     Tick += OnTick;
   }
@@ -53,49 +55,88 @@ public partial class PlayerMaster : Node2D {
     tick = tickRate;
   }
   #endregion
+
+  #region Cards
+
+  private void InitialiseCards() {
+    foreach (CardVisual card in hand.Select(card => { CardVisual visual = cardPrefab.Instantiate<CardVisual>(); visual.card = card; return visual; })) {
+      cardVisuals.Add(card);
+      AddChild(card);
+    }
+  }
+  private void AddCard(Card card) {
+    if (hand.Count >= 5) return;
+    hand.Add(card);
+    
+    CardVisual visual = cardPrefab.Instantiate<CardVisual>();
+    visual.card = card;
+    visual.Position = new Vector2(64, 64);
+    
+    cardVisuals.Add(visual);
+    AddChild(visual);
+  }
+  private void RemoveCard(int index) {
+    hand.RemoveAt(index);
+    cardVisuals[index].QueueFree();
+    cardVisuals.RemoveAt(index);
+  }
+
+  private void UpdateCards() {
+    if(playMode == Mode.IDLE) selectedCard = 255;
+
+    deckVisual.mana = hand.Count;
+    if (mousePos is { X: > 56, Y: > 45 }) {
+      selectedCard = 6;
+      deckVisual.Position = deckVisual.Position.Lerp(new Vector2(44, 39), animSpeed);
+    }
+    else {
+      deckVisual.Position = deckVisual.Position.Lerp(new Vector2(60, 39), animSpeed);
+    }
+
+    
+    for (byte i = 0; i < cardVisuals.Count; i++) {
+      cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(16 + 8 * i, cardVisuals[i].Position.Y), animSpeed);
+      if (cardVisuals[i].Position.X - mousePos.X is < 4 and > -4 && mousePos.Y > 50) {
+        cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(cardVisuals[i].Position.X, playMode == Mode.IDLE ? 39.5f : 100), animSpeed);
+        cardVisuals[i].Zoomed = true;
+        cardVisuals[i].ZIndex = 100;
+        selectedCard = i;
+      }
+      else {
+        cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(cardVisuals[i].Position.X, playMode == Mode.IDLE ? 68 - mousePos.Y / 8 : 100), animSpeed);
+        cardVisuals[i].Zoomed = false;
+        cardVisuals[i].ZIndex = i + 11;
+      }
+    }
+  }
+
+  #endregion
   
-  public override void _Input(InputEvent @event) {
+  public override async void _Input(InputEvent @event) {
     switch (@event) {
       case InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left } mouseClick:
         MouseClick?.Invoke(mouseClick.Position);
+        if (selectedCard == 6 && playMode == Mode.IDLE && hand.Count < 5 && mana >= hand.Count) {
+          mana -= hand.Count;
+          AddCard(deck[rand.RandiRange(0, deck.Count - 1)]);
+          selectedCard = 255;
+        }
+        else if (selectedCard != 255 && playMode == Mode.IDLE) if (hand[selectedCard].ManaCost <= mana && await hand[selectedCard].Play()) {
+          RemoveCard(selectedCard);
+          selectedCard = 255;
+        }
         break;
       case InputEventMouseMotion motion:
         mousePos = motion.Position;
         break;
     }
   }
-
-  private void InitialiseCards() {
-    foreach (Sprite2D card in hand.Select(card => cardPrefab.Instantiate<Sprite2D>())) {
-      cardVisuals.Add(card);
-      AddChild(card);
-    }
-  }
-  private void AddCard(Card card) {
-    
-  }
-  private void RemoveCard(Card card) {
-    
-  }
-
-  private void UpdateCards() {
-    for (int i = 0; i < cardVisuals.Count; i++) {
-      cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(16 + 8 * i, cardVisuals[i].Position.Y), animSpeed);
-      if (cardVisuals[i].Position.X - mousePos.X is < 4 and > -4 && mousePos.Y > 50) {
-        cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(cardVisuals[i].Position.X, playMode == Mode.IDLE ? 40 : 20), animSpeed);
-        cardVisuals[i].Frame = hand[i].SpriteID;
-        cardVisuals[i].ZIndex = 100;
-      }
-      else {
-        cardVisuals[i].Position = cardVisuals[i].Position.Lerp(new Vector2(cardVisuals[i].Position.X, playMode == Mode.IDLE ? 68 - mousePos.Y / 8 : 20), animSpeed);
-        cardVisuals[i].Frame = hand[i].MiniSpriteID;
-        cardVisuals[i].ZIndex = i + 11;
-      }
-    }
-  }
+  
   public override void _Process(double delta) {
     HandleTicks((float)delta);
     UpdateCards();
+    
+    manaText.Text = "[center]Mana:" + mana + "/" + maxMana + "[/center]";
     
     manaBar.MinValue = 0;
     manaBar.MaxValue = maxMana;
@@ -105,9 +146,7 @@ public partial class PlayerMaster : Node2D {
   public void UseMana(int amount) => mana -= amount;
   
   private void OnTick() {
-    mana += baseManaRegen;
-    
-    Mathf.Clamp(mana, 0, maxMana);
+    mana += mana >= maxMana ? 0 : baseManaRegen;
   }
   
 }

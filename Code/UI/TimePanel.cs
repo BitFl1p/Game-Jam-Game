@@ -22,10 +22,6 @@ public partial class TimePanel : Node2D {
     }
   }
 
-  public override void _Ready() {
-    Speed = 0;
-  }
-
   public override void _Input(InputEvent @event) {
     switch (@event) {
       case InputEventMouseMotion mouseMotion: mousePos = mouseMotion.Position; break;

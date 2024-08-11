@@ -1,9 +1,23 @@
-[gd_scene load_steps=2 format=3 uid="uid://bs4vdmwyvj7jk"]
+[gd_scene load_steps=5 format=3 uid="uid://bs4vdmwyvj7jk"]
 
 [ext_resource type="Texture2D" uid="uid://wm1ex3ef2740" path="res://Art/Cards/cards.png" id="1_seevt"]
+[ext_resource type="Script" path="res://Code/UI/CardVisual.cs" id="2_kpu8s"]
+[ext_resource type="Texture2D" uid="uid://dn55aoiiptfgm" path="res://Art/Cards/numbers.png" id="3_nbo5j"]
+[ext_resource type="Script" path="res://Code/UI/Number.cs" id="4_h2abr"]
 
-[node name="TestMini" type="Sprite2D"]
+[node name="TestCard" type="Sprite2D" node_paths=PackedStringArray("number")]
 z_index = 20
+texture_filter = 1
 position = Vector2(57, 64)
 texture = ExtResource("1_seevt")
 hframes = 2
+script = ExtResource("2_kpu8s")
+number = NodePath("Number")
+
+[node name="Number" type="Sprite2D" parent="."]
+position = Vector2(-6, -11.5)
+texture = ExtResource("3_nbo5j")
+centered = false
+hframes = 4
+vframes = 3
+script = ExtResource("4_h2abr")

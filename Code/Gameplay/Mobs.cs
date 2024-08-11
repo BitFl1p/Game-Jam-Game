@@ -1,8 +1,9 @@
 using Godot;
 
 public class Human : Mob {
-  public override void Place(Vector2 position) {
+  public override bool Place(Vector2 position) {
     GD.Print("Placed Human at " + position);
+    return true;
   }
 
   public override void Ai() {

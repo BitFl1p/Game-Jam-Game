@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://cwpteoidg1l0h"]
+[gd_scene load_steps=38 format=3 uid="uid://cwpteoidg1l0h"]
 
 [ext_resource type="Texture2D" uid="uid://bkdw258cyt6b7" path="res://Art/UI/mouse.png" id="1_0hc6r"]
 [ext_resource type="Script" path="res://Code/Ambient/Parallax.cs" id="1_jclm6"]
@@ -13,10 +13,16 @@
 [ext_resource type="Script" path="res://Code/UI/ManaBar.cs" id="7_51pfd"]
 [ext_resource type="Script" path="res://Code/Gameplay/PlayerMaster.cs" id="7_hoyye"]
 [ext_resource type="Script" path="res://Code/Backbone/Island.cs" id="7_iyyel"]
-[ext_resource type="Texture2D" uid="uid://b2mrwhcbb6cft" path="res://Art/UI/mana_text.png" id="7_oovo3"]
+[ext_resource type="FontFile" uid="uid://d0wm58vw5uo44" path="res://Art/UI/Blocky.ttf" id="11_4mi1l"]
+[ext_resource type="Texture2D" uid="uid://jif3tc1kfkba" path="res://Art/Entities/Tree.png" id="14_xxnbq"]
+[ext_resource type="Texture2D" uid="uid://cwk8pg4cnlxtg" path="res://Art/Entities/fire.png" id="15_2taqd"]
 [ext_resource type="Texture2D" uid="uid://bt8veoi3xeypa" path="res://Art/UI/panel.png" id="15_pcbhk"]
 [ext_resource type="Script" path="res://Code/UI/TimePanel.cs" id="16_2r7kj"]
 [ext_resource type="Texture2D" uid="uid://dkksglsfc4jdr" path="res://Art/UI/playButtons.png" id="17_bbl8m"]
+[ext_resource type="Script" path="res://Code/UI/DeckVisual.cs" id="18_lbf7g"]
+[ext_resource type="Script" path="res://Code/UI/Number.cs" id="19_tyb1s"]
+[ext_resource type="Texture2D" uid="uid://epuw4ke58xpn" path="res://Art/Cards/the deck that took me way too goddamn long to draw.png" id="20_pihpp"]
+[ext_resource type="Texture2D" uid="uid://dn55aoiiptfgm" path="res://Art/Cards/numbers.png" id="21_f2krr"]
 
 [sub_resource type="Animation" id="Animation_5gaex"]
 resource_name = "Idle"
@@ -71,6 +77,54 @@ _data = {
 "RESET": SubResource("Animation_igmtg"),
 "load_in": SubResource("Animation_o3ks2")
 }
+
+[sub_resource type="Theme" id="Theme_toop7"]
+default_font = ExtResource("11_4mi1l")
+default_font_size = 0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1a7e2"]
+atlas = ExtResource("14_xxnbq")
+region = Rect2(0, 0, 6, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qqg0w"]
+atlas = ExtResource("14_xxnbq")
+region = Rect2(0, 5, 6, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1a7e2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qqg0w")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_blmnd"]
+atlas = ExtResource("15_2taqd")
+region = Rect2(0, 0, 6, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pbx5m"]
+atlas = ExtResource("15_2taqd")
+region = Rect2(0, 5, 6, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dk1wt"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_blmnd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pbx5m")
+}],
+"loop": true,
+"name": &"default",
+"speed": 12.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2bpdf"]
 atlas = ExtResource("5_5kmhm")
@@ -151,13 +205,15 @@ offset_right = 64.0
 offset_bottom = 64.0
 color = Color(0.105882, 0.113725, 0.203922, 1)
 
-[node name="Player" type="Node2D" parent="." node_paths=PackedStringArray("manaBar", "island")]
+[node name="Player" type="Node2D" parent="." node_paths=PackedStringArray("manaBar", "island", "manaText", "deckVisual")]
 script = ExtResource("7_hoyye")
-maxMana = 100
+maxMana = 10
 baseManaRegen = 1
 manaBar = NodePath("TextureProgressBar")
 island = NodePath("AnimationPlayer/Island")
 cardPrefab = ExtResource("5_ppor0")
+manaText = NodePath("TextureProgressBar/ManaText")
+deckVisual = NodePath("Deck")
 tickRate = 0.5
 
 [node name="Mouse" type="Sprite2D" parent="Player"]
@@ -187,10 +243,23 @@ texture_under = ExtResource("5_g6gkk")
 texture_progress = ExtResource("6_ndnwg")
 script = ExtResource("7_51pfd")
 
-[node name="ManaText" type="Sprite2D" parent="Player/TextureProgressBar"]
-position = Vector2(-1, 0)
-texture = ExtResource("7_oovo3")
-centered = false
+[node name="ManaText" type="RichTextLabel" parent="Player/TextureProgressBar"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = -4.0
+offset_right = 61.0
+offset_bottom = 7.0
+mouse_filter = 2
+theme = SubResource("Theme_toop7")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+bbcode_enabled = true
+text = "[center]Mana:10/10[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+tab_size = 0
+shortcut_keys_enabled = false
+text_direction = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
 root_node = NodePath("../..")
@@ -202,28 +271,58 @@ autoplay = "Idle"
 [node name="Island" type="Sprite2D" parent="Player/AnimationPlayer"]
 z_index = 10
 texture_filter = 1
-position = Vector2(4, 7.7)
+position = Vector2(4, 8)
 texture = ExtResource("4_my4qc")
 centered = false
 script = ExtResource("7_iyyel")
+
+[node name="Tree" type="AnimatedSprite2D" parent="Player/AnimationPlayer/Island"]
+position = Vector2(22, 26)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+frame_progress = 0.957191
+offset = Vector2(0, -2.5)
+
+[node name="Fire" type="AnimatedSprite2D" parent="Player/AnimationPlayer/Island"]
+position = Vector2(11, 28)
+sprite_frames = SubResource("SpriteFrames_dk1wt")
+autoplay = "default"
+frame_progress = 0.567476
+offset = Vector2(0, -2.5)
 
 [node name="Human" type="AnimatedSprite2D" parent="Player/AnimationPlayer/Island"]
 position = Vector2(11, 21)
 sprite_frames = SubResource("SpriteFrames_upw3j")
 autoplay = "default"
 frame_progress = 0.989973
-centered = false
+offset = Vector2(0.5, -1.5)
 
-[node name="Panel" type="Sprite2D" parent="." node_paths=PackedStringArray("pause", "play", "fastForward")]
+[node name="Deck" type="Sprite2D" parent="Player" node_paths=PackedStringArray("manaCost")]
+z_index = 50
+position = Vector2(44, 39)
+texture = ExtResource("20_pihpp")
+centered = false
+script = ExtResource("18_lbf7g")
+manaCost = NodePath("Number")
+
+[node name="Number" type="Sprite2D" parent="Player/Deck"]
+position = Vector2(4, 3)
+texture = ExtResource("21_f2krr")
+centered = false
+hframes = 4
+vframes = 3
+script = ExtResource("19_tyb1s")
+
+[node name="Panel" type="Sprite2D" parent="Player" node_paths=PackedStringArray("pause", "play", "fastForward")]
 z_index = 15
-position = Vector2(9, 4)
+position = Vector2(7, -8)
 texture = ExtResource("15_pcbhk")
 script = ExtResource("16_2r7kj")
 pause = NodePath("Pause")
 play = NodePath("Play")
 fastForward = NodePath("FastForward")
 
-[node name="Pause" type="Sprite2D" parent="Panel"]
+[node name="Pause" type="Sprite2D" parent="Player/Panel"]
 position = Vector2(-9, -3)
 texture = ExtResource("17_bbl8m")
 centered = false
@@ -231,14 +330,14 @@ hframes = 2
 vframes = 2
 frame = 1
 
-[node name="Play" type="Sprite2D" parent="Panel"]
+[node name="Play" type="Sprite2D" parent="Player/Panel"]
 position = Vector2(-2, -3)
 texture = ExtResource("17_bbl8m")
 centered = false
 hframes = 2
 vframes = 2
 
-[node name="FastForward" type="Sprite2D" parent="Panel"]
+[node name="FastForward" type="Sprite2D" parent="Player/Panel"]
 position = Vector2(5, -3)
 texture = ExtResource("17_bbl8m")
 centered = false
