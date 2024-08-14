@@ -9,11 +9,13 @@ public interface IPlaceable {
 
 public abstract partial class Mob : Node2D, IPlaceable {
   
-  public Vector2I islandOffset = new(3, 2);
-  public Vector2I islandPos = new(1, 2);
+  [Export] protected Vector2I islandPos = new(1, 2);
   
   public abstract bool Place(Vector2 position);
-  public abstract void Ai();
+  protected abstract void Ai();
+
+  protected int GetTilemapPosition() => PlayerMaster.GetTilemapPosition(islandPos);
+
 }
 
 public abstract class Tile : IPlaceable {
@@ -28,9 +30,10 @@ public interface ICard {
 
 }
 public abstract class Card : ICard {
-  public int ManaCost { get; internal set; }
-  public int MiniSpriteID { get; internal set; }
-  public int SpriteID { get; internal  set; }
+  public int ManaCost { get; internal init; }
+
+  public int MiniSpriteId { get; internal init; }
+  public int SpriteId { get; internal  init; }
   protected readonly PlayerMaster player;
   public abstract Task<bool> Play();
 
@@ -52,7 +55,7 @@ public abstract class Card : ICard {
       tcs = new TaskCompletionSource<Vector2>();
       Vector2 pos = await tcs.Task;
       if(pos is not {X: > 7 and < 57, Y: > 10 and < 44}) continue;
-      if (!toPlace.Place(pos)) return false;
+      if (!toPlace.Place(pos)) continue;
       amount--;
     }
     player.playMode = PlayerMaster.Mode.IDLE;

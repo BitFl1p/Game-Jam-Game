@@ -9,6 +9,7 @@ public partial class PlayerMaster : Node2D {
     IDLE, PLACING
   }
 
+  public static Vector2I IslandOffset => new(7, 9);
   private RandomNumberGenerator rand = new();
   [Export] private int maxMana, mana, baseManaRegen;
   [Export] private TextureProgressBar manaBar;
@@ -39,6 +40,7 @@ public partial class PlayerMaster : Node2D {
     deck = new List<Card> {new TestCard()};
     timePanel.Speed = 0;
     Tick += OnTick;
+    mana = maxMana;
   }
   #endregion
 
@@ -58,7 +60,7 @@ public partial class PlayerMaster : Node2D {
   #endregion
 
   #region Cards
-
+  public static int GetTilemapPosition(Vector2I globalPos) => 53 * (globalPos.Y - IslandOffset.Y) + (globalPos.X - IslandOffset.X);
   private void InitialiseCards() {
     foreach (CardVisual card in hand.Select(card => { CardVisual visual = cardPrefab.Instantiate<CardVisual>(); visual.card = card; return visual; })) {
       cardVisuals.Add(card);
@@ -123,9 +125,12 @@ public partial class PlayerMaster : Node2D {
           AddCard(deck[rand.RandiRange(0, deck.Count - 1)]);
           selectedCard = 255;
         }
-        else if (hand[selectedCard].ManaCost <= mana && await hand[selectedCard].Play()) {
-          RemoveCard(selectedCard);
-          selectedCard = 255;
+        else if (hand[selectedCard].ManaCost <= mana) {
+          timePanel.Speed = 0;
+          if (await hand[selectedCard].Play()) {
+            RemoveCard(selectedCard);
+            selectedCard = 255;
+          }
         }
         break;
       case InputEventMouseMotion motion:
@@ -145,10 +150,18 @@ public partial class PlayerMaster : Node2D {
     manaBar.Value = mana;
   }
 
-  public void UseMana(int amount) => mana -= amount;
+  public void UseMana(int amount) {
+    mana -= amount;
+    if (mana < 0) mana = 0;
+  }
+
+  public void GainMana(int amount) {
+    mana += amount;
+    if (mana > maxMana) mana = maxMana;
+  }
   
   private void OnTick() {
-    mana += mana >= maxMana ? 0 : baseManaRegen;
+    //mana += mana >= maxMana ? 0 : baseManaRegen;
     //foreach (Mob mob in currentMobs) 
   }
   

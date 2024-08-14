@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 public class TestCard : Card {
   public TestCard() {
     ManaCost = 1;
-    MiniSpriteID = 0;
-    SpriteID = 1;
+    MiniSpriteId = 0;
+    SpriteId = 1;
   }
  
   public override async Task<bool> Play() {

@@ -5,21 +5,22 @@ public partial class Island : Sprite2D {
   
   public enum PixelType : byte {
     NONE,
-    DIRT,
-    GRASS,
-    TALL_GRASS
+    DIRT, GRASS, TALL_GRASS,
+    BLOOMING_GRASS,
+    FIRE, ASH, FERTILIZED_DIRT, WATER,
+    STONE
   }
   
   private Image image;
   private RandomNumberGenerator random = new();
   private byte[] tilemap = new byte[53 * 36];
+  
   public override void _Ready() {
     image = Texture.GetImage();
     random.Randomize();
     
     Array.Fill(tilemap, (byte)1);
-    tilemap[355] = 2;
-    tilemap[356] = 3;
+    for(int i = 0; i < 100; i++) tilemap[i+100] = 2;
 
     PlayerMaster.Tick += OnTick;
   }
@@ -30,66 +31,135 @@ public partial class Island : Sprite2D {
 
   #region TileLogic
   private byte[] GrassLogic(int x, int y) {
-    byte[] temp = {
-      0,0,0,
-      0,0,0,
-      0,0,0
-    };
-    byte dirt = 0, grass = 0;
-    for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
-      if (dirt > 2 && random.RandiRange(0, 4) == 0) temp[4] = (byte)PixelType.DIRT;
-      if (grass > 3 && random.RandiRange(0, 12) == 0) temp[4] = (byte)PixelType.TALL_GRASS;
-      
-      if ((x2 is not (0 or 2) || y2 != 1) && (y2 is not (0 or 2) || x2 != 1)) continue;
-
-      try {
-        
-        if (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)] == (byte)PixelType.GRASS) grass++;
-        if (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)] != (byte)PixelType.DIRT) continue;
-        dirt++;
-        if(random.RandiRange(0, 3) == 0 && x + x2 - 1 < 53) temp[y2 * 3 + x2] = (byte)PixelType.GRASS;
-        
-      }
-      catch { temp[y2 * 3 + x2] = 0; } //Ignored
-    }
-    return temp;
-  }
-  
-  private byte[] TallGrassLogic(int x, int y) {
-    byte[] temp = {
-      0,0,0,
-      0,0,0,
-      0,0,0
-    };
-    byte dirt = 0;
+    byte[] temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    byte grass = 0;
     
     for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
-      
-      if (dirt > 1 && random.RandiRange(0, 4) == 0) temp[4] = (byte)PixelType.GRASS;
-      if ((x2 is not (0 or 2) || y2 != 1) && (y2 is not (0 or 2) || x2 != 1)) continue;
-      
+
       try {
-        if(random.RandiRange(0, 6) == 0 && x + x2 - 1 < 53  && tilemap[53 * (y + y2 - 1) + (x + x2 - 1)] == (byte)PixelType.GRASS) temp[y2 * 3 + x2] = 3;
-        else if (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)] != (byte)PixelType.DIRT) continue;
-        
-        dirt++;
-        if(random.RandiRange(0, 12) == 0 && x + x2 - 1 < 53) temp[y2 * 3 + x2] = (byte)PixelType.GRASS;
+        temp[y2 * 3 + x2] = tilemap[53 * (y + y2 - 1) + (x + x2 - 1)];
+        if (x2 == 1 && y2 == 1) continue;
+
+        switch (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)]) {
+          case (byte)PixelType.GRASS or 
+            (byte)PixelType.TALL_GRASS or 
+            (byte)PixelType.BLOOMING_GRASS:
+            grass++;
+            break;
+        }
       }
-      catch { temp[y2 * 3 + x2] = 0; }
+      catch {
+        temp[y2 * 3 + x2] = 0;
+      }
     }
+
+    if (grass < 4 && random.RandiRange(0, 10) == 0) {
+      temp[4] = (byte)PixelType.DIRT;
+      return temp;
+    }
+    for (int i = 0; i < 9; i++) {
+      if(temp[i]== (byte)PixelType.DIRT && random.RandiRange(0, 12) == 0) temp[i] = (byte)PixelType.GRASS;
+    }
+
+    return temp;
+  }
+  private byte[] TallGrassLogic(int x, int y) {
+    byte[] temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    byte grass = 0;
+    
+    for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
+
+      try {
+        temp[y2 * 3 + x2] = tilemap[53 * (y + y2 - 1) + (x + x2 - 1)];
+        if (x2 == 1 && y2 == 1) continue;
+
+        switch (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)]) {
+          case (byte)PixelType.GRASS or 
+            (byte)PixelType.TALL_GRASS or 
+            (byte)PixelType.BLOOMING_GRASS:
+            grass++;
+            break;
+        }
+      }
+      catch {
+        temp[y2 * 3 + x2] = 0;
+      }
+    }
+
+    if (grass < 4 && random.RandiRange(0, 10) == 0) {
+      temp[4] = (byte)PixelType.DIRT;
+      return temp;
+    }
+    for (int i = 0; i < 9; i++) {
+      if(temp[i]== (byte)PixelType.DIRT && random.RandiRange(0, 12) == 0) temp[i] = (byte)PixelType.GRASS;
+    }
+
+    return temp;
+  }
+  private byte[] BloomingGrassLogic(int x, int y) {
+    byte[] temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    byte tallGrass = 0;
+    
+    for (int x2 = 0; x2 <= 2; x2++) for (int y2 = 0; y2 <= 2; y2++) {
+
+      if (tilemap.Length <= 53 * (y + y2 - 1) + (x + x2 - 1)) {
+        
+        continue;
+      }
+      temp[y2 * 3 + x2] = tilemap[53 * (y + y2 - 1) + (x + x2 - 1)];
+      if (x2 == 1 && y2 == 1) continue;
+      
+      switch (tilemap[53 * (y + y2 - 1) + (x + x2 - 1)]) {
+        case (byte)PixelType.TALL_GRASS: tallGrass++; break;
+      }
+    }
+    if (tallGrass < 6 && random.RandiRange(0, 12) == 0) temp[4] = (byte)PixelType.FERTILIZED_DIRT;
+    
+    if (random.RandiRange(0, 12) != 0 || tallGrass > 4) return temp;
+    int i = random.RandiRange(0, 9);
+    while(i == 4 && temp[i] is (byte)PixelType.GRASS or (byte)PixelType.FERTILIZED_DIRT) i = random.RandiRange(0, 9);
+    temp[i] = temp[i] switch {
+      (byte)PixelType.GRASS => (byte)PixelType.TALL_GRASS,
+      (byte)PixelType.FERTILIZED_DIRT => (byte)PixelType.BLOOMING_GRASS,
+      _ => temp[i]
+    };
+    return temp;
+  }
+  private byte[] FireLogic(int x, int y) {
+    byte[] temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    return temp;
+  }
+  private byte[] WaterLogic(int x, int y) {
+    byte[] temp = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     return temp;
   }
   
   private byte[] HandlePixelLogic(int x, int y) => tilemap[53 * y + x] switch {
     (byte)PixelType.GRASS => GrassLogic(x, y),
     (byte)PixelType.TALL_GRASS => TallGrassLogic(x, y),
+    (byte)PixelType.BLOOMING_GRASS => TallGrassLogic(x, y),
+    (byte)PixelType.FIRE => TallGrassLogic(x, y),
+    (byte)PixelType.WATER => TallGrassLogic(x, y),
     _ => new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+  };
+  
+  private static Color FindPixelColor(byte tile) => tile switch {  
+    (byte)PixelType.DIRT => new Color(0xc46833ff),
+    (byte)PixelType.GRASS => new Color(0x66aa5dff),
+    (byte)PixelType.TALL_GRASS => new Color(0x2a8379ff),
+    (byte)PixelType.BLOOMING_GRASS => new Color(0xe687c5ff),
+    (byte)PixelType.FIRE => new Color(0xdd867dff),
+    (byte)PixelType.WATER => new Color(0x589ffcff),
+    (byte)PixelType.STONE => new Color(0xc4c7eeff),
+    (byte)PixelType.ASH => new Color(0x635d96ff),
+    _ => new Color(0x00000000)
   };
   #endregion
 
   #region TilemapHandling
   private byte[] HandleTilemapLogic() {
-    byte[] newMap = tilemap;
+    byte[] newMap = new byte[53 * 36];
+    Array.Copy(tilemap, newMap, 53 * 36);
     for(int x = 0; x <= 52; x++) for(int y = 0; y <= 35; y++) switch (x, y) {
       case (2, 1): case(2,36): case(53, 1): case(53, 36): break;
       
@@ -119,13 +189,25 @@ public partial class Island : Sprite2D {
     texture.SetImage(image);
     Texture = texture;
   }
+
+  public bool SetTile(int i, PixelType tile) {
+    try {
+      tilemap[i] = (byte)tile;
+      return true;
+    }
+    catch {
+      return false;
+    }
+  }
   
-  private Color FindPixelColor(byte tile) => tile switch {  
-    (byte)PixelType.DIRT => new Color(0xc46833ff),
-    (byte)PixelType.GRASS => new Color(0x66aa5dff),
-    (byte)PixelType.TALL_GRASS => new Color(0x2a8379ff),
-    _ => new Color(0x00000000)
-  };
+  public PixelType GetTile(int i) {
+    try {
+      return (PixelType)tilemap[i];
+    }
+    catch {
+      return 0;
+    }
+  }
   #endregion
   
 }

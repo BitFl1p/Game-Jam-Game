@@ -10,13 +10,13 @@ public partial class CardVisual : Sprite2D {
     set {
       if(value == zoomed) return;
       zoomed = value;
-      Frame = zoomed ? card.SpriteID : card.MiniSpriteID;
+      Frame = zoomed ? card.SpriteId : card.MiniSpriteId;
       number.Position = zoomed ?  new Vector2(-13, -22.5f) : new Vector2(-6, -11.5f);
     }
   }
 
   public override void _Ready() {
-    Frame = zoomed ? card.SpriteID : card.MiniSpriteID;
+    Frame = zoomed ? card.SpriteId : card.MiniSpriteId;
     number.Position = zoomed ?  new Vector2(-13, -22.5f) : new Vector2(-6, -11.5f);
   }
 

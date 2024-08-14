@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://x4ybd1vv7hce"]
+
+[ext_resource type="FontFile" uid="uid://d0wm58vw5uo44" path="res://Art/UI/Blocky.ttf" id="1_aphnj"]
+
+[resource]
+default_font = ExtResource("1_aphnj")
+default_font_size = 7
