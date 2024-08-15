@@ -6,46 +6,60 @@ using Godot;
 public partial class PlayerMaster : Node2D {
   
   public enum Mode : byte {
-    IDLE, PLACING
+    IDLE, PLACING, INFO
   }
 
+  private bool gameOver;
+  [Export] private ColorRect gameOverScreen;
   public static Vector2I IslandOffset => new(7, 9);
   private RandomNumberGenerator rand = new();
+  
   [Export] private int maxMana, mana, baseManaRegen;
   [Export] private TextureProgressBar manaBar;
   [Export] public float animSpeed = .1f;
   [Export] public Island island;
-  [Export] private PackedScene cardPrefab;
+  [Export] private PackedScene cardPrefab, manaParticle;
   [Export] private RichTextLabel manaText;
   [Export] private DeckVisual deckVisual;
-  [Export] private TimePanel timePanel;
+  [Export] public TimePanel timePanel;
+  [Export] public SoundManager soundManager;
+  
   public Mode playMode;
   private readonly List<Card> hand = new();
   private readonly List<CardVisual> cardVisuals = new();
   private List<Card> deck;
-  public readonly List<Mob> currentMobs = new();
+  public readonly List<Creature> currentMobs = new();
   private byte selectedCard;
   private Vector2 mousePos;
-  
   #region Singleton
   public static PlayerMaster Instance { get; private set; }
   public static Action<Vector2> MouseClick;
+  public static event Action MouseRightClick;
   public override void _Ready() {
     if (Instance is not null) QueueFree();
     else Instance = this;
     
-    InitialiseCards();
     rand.Randomize();
+    
+    InitialiseCards();
 
-    deck = new List<Card> {new TestCard()};
+    deck = new List<Card> {
+      new PlaceTree(), new PlaceTree(), new PlaceTree(), new PlaceTree(), new PlaceTree(),  new PlaceTree(),  new PlaceTree(),  new PlaceTree(),  new PlaceTree(),  new PlaceTree(), 
+      new PlaceFire(), new PlaceFire(), 
+      new PlaceWater(), new PlaceWater(), new PlaceWater(), 
+      new PlaceStone(),
+      new PlaceGrass(), new PlaceGrass(), new PlaceGrass(),
+      new PlaceBunny(), new PlaceBunny(), 
+      new PlaceHuman(), 
+      new FireToStone(), 
+    };
     timePanel.Speed = 0;
-    Tick += OnTick;
     mana = maxMana;
   }
   #endregion
 
   #region Ticker
-  [Export] private float tickRate = 0.25f;
+  [Export] private float tickRate = 0.5f;
   public float tickRateMultiplier;
   private float tick;
   
@@ -116,6 +130,7 @@ public partial class PlayerMaster : Node2D {
   #endregion
   
   public override async void _Input(InputEvent @event) {
+    if(gameOver) return;
     switch (@event) {
       case InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left } mouse:
         MouseClick?.Invoke(mouse.Position);
@@ -124,14 +139,27 @@ public partial class PlayerMaster : Node2D {
           mana -= hand.Count;
           AddCard(deck[rand.RandiRange(0, deck.Count - 1)]);
           selectedCard = 255;
+          soundManager.Play(SoundManager.Sound.DRAW);
         }
         else if (hand[selectedCard].ManaCost <= mana) {
+          int speed = timePanel.Speed;
           timePanel.Speed = 0;
-          if (await hand[selectedCard].Play()) {
+          bool what = await hand[selectedCard].Play();
+          if (what) {
+            UseMana(hand[selectedCard].ManaCost);
             RemoveCard(selectedCard);
-            selectedCard = 255;
           }
+          selectedCard = 255;
+          timePanel.Speed = speed;
         }
+        break;
+      case InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Right }:
+        MouseRightClick?.Invoke();
+        if (selectedCard >= 6 || playMode != Mode.IDLE || mana == 0) return;
+        GainMana(hand.Count - 2, (Vector2I)cardVisuals[selectedCard].GlobalPosition);
+        RemoveCard(selectedCard);
+        if (mana < 0) mana = 0; 
+        selectedCard = 255;
         break;
       case InputEventMouseMotion motion:
         mousePos = motion.Position;
@@ -148,6 +176,23 @@ public partial class PlayerMaster : Node2D {
     manaBar.MinValue = 0;
     manaBar.MaxValue = maxMana;
     manaBar.Value = mana;
+    
+    if (gameOver) {
+      gameOverScreen.Visible = true;
+      if(soundManager.music.PitchScale > 0.02f) soundManager.music.PitchScale -= .001f;
+      
+    }
+    else gameOverScreen.Visible = false;
+    
+    if (mana > 0) return;
+    
+    bool canRegen = false;
+    if (currentMobs.Count > 0) foreach (Creature mob in currentMobs.Where(mob => mob.canRegenMana)) canRegen = true;
+    else canRegen = false;
+    if (!canRegen) 
+      gameOver = true;
+    
+    
   }
 
   public void UseMana(int amount) {
@@ -155,14 +200,13 @@ public partial class PlayerMaster : Node2D {
     if (mana < 0) mana = 0;
   }
 
-  public void GainMana(int amount) {
+  public void GainMana(int amount, Vector2I pos) {
     mana += amount;
+    ManaParticle particle = manaParticle.Instantiate<ManaParticle>();
+    AddChild(particle);
+    particle.GlobalPosition = pos;
+    soundManager.Play(SoundManager.Sound.GAIN_MANA);
     if (mana > maxMana) mana = maxMana;
-  }
-  
-  private void OnTick() {
-    //mana += mana >= maxMana ? 0 : baseManaRegen;
-    //foreach (Mob mob in currentMobs) 
   }
   
 }

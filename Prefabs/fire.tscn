@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://chalo05mnhbgu"]
+
+[ext_resource type="Texture2D" uid="uid://cwk8pg4cnlxtg" path="res://Art/Entities/fire.png" id="1_uccbx"]
+[ext_resource type="Script" path="res://Code/Gameplay/Fire.cs" id="2_8u21h"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qnp5a"]
+atlas = ExtResource("1_uccbx")
+region = Rect2(0, 0, 6, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1icma"]
+atlas = ExtResource("1_uccbx")
+region = Rect2(0, 5, 6, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qnp5a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1icma")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[node name="Tree" type="AnimatedSprite2D"]
+position = Vector2(11, 17)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+frame_progress = 0.957191
+offset = Vector2(0, -2.5)
+script = ExtResource("2_8u21h")

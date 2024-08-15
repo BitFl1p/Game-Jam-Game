@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://bkpfwk50p0tnb"]
+
+[ext_resource type="Texture2D" uid="uid://dcg67yewejlag" path="res://Art/Entities/campfire.png" id="1_p45wu"]
+[ext_resource type="Script" path="res://Code/Gameplay/Campfire.cs" id="2_y6xj6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0j8nu"]
+atlas = ExtResource("1_p45wu")
+region = Rect2(0, 0, 6, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bd5ob"]
+atlas = ExtResource("1_p45wu")
+region = Rect2(0, 5, 6, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0j8nu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bd5ob")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[node name="Tree" type="AnimatedSprite2D"]
+position = Vector2(11, 17)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+offset = Vector2(0, -2.5)
+script = ExtResource("2_y6xj6")

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://3ahgnxl00863"]
+
+[ext_resource type="Texture2D" uid="uid://1f0ekcoje3me" path="res://Art/World/manaParticle.png" id="1_rorb8"]
+[ext_resource type="Script" path="res://Code/Ambient/ManaParticle.cs" id="2_oigqd"]
+
+[node name="ManaParticle" type="Sprite2D"]
+z_index = 99
+z_as_relative = false
+texture_filter = 1
+texture = ExtResource("1_rorb8")
+script = ExtResource("2_oigqd")

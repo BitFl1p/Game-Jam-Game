@@ -1,0 +1,49 @@
+[gd_scene load_steps=8 format=3 uid="uid://cci53a5dl8poc"]
+
+[ext_resource type="Texture2D" uid="uid://d0k7js7rbhgam" path="res://Art/Entities/Human.png" id="1_f0dtv"]
+[ext_resource type="Script" path="res://Code/Gameplay/Human.cs" id="2_eexb8"]
+[ext_resource type="Texture2D" uid="uid://cw4yyursvrdut" path="res://Art/Entities/foodIcon.png" id="3_1bdm5"]
+[ext_resource type="Texture2D" uid="uid://cbmwj6qk4m5oq" path="res://Art/Entities/dying.png" id="4_a6xrq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7t8gr"]
+atlas = ExtResource("1_f0dtv")
+region = Rect2(0, 0, 3, 3)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7v3y3"]
+atlas = ExtResource("1_f0dtv")
+region = Rect2(0, 3, 3, 3)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7t8gr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7v3y3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[node name="Tree" type="AnimatedSprite2D" node_paths=PackedStringArray("hungerIcon", "dyingIcon")]
+z_index = 1
+position = Vector2(11, 17)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+frame_progress = 0.957191
+offset = Vector2(-0.5, -1.5)
+script = ExtResource("2_eexb8")
+hungerIcon = NodePath("FoodIcon")
+dyingIcon = NodePath("Dying")
+
+[node name="FoodIcon" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -8)
+texture = ExtResource("3_1bdm5")
+
+[node name="Dying" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -8)
+texture = ExtResource("4_a6xrq")

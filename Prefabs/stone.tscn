@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://b5swa5rvb5lhj"]
+
+[ext_resource type="Texture2D" uid="uid://27tfyysmih0h" path="res://Art/Entities/stone.png" id="1_kaq03"]
+[ext_resource type="Script" path="res://Code/Gameplay/Stone.cs" id="2_jsqat"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_kaq03")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[node name="Tree" type="AnimatedSprite2D"]
+position = Vector2(11, 17)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+frame_progress = 0.957191
+offset = Vector2(0, -2.5)
+script = ExtResource("2_jsqat")

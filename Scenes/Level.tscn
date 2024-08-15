@@ -1,0 +1,373 @@
+[gd_scene load_steps=34 format=3 uid="uid://b3ibyffym8h5o"]
+
+[ext_resource type="Script" path="res://Code/Ambient/Parallax.cs" id="1_qdgfd"]
+[ext_resource type="Texture2D" uid="uid://cd1kelqo128gw" path="res://Art/World/test_bg.png" id="2_yi7xe"]
+[ext_resource type="Script" path="res://Code/Ambient/StarSpawner.cs" id="3_est6y"]
+[ext_resource type="Script" path="res://Code/Gameplay/PlayerMaster.cs" id="4_xpxmc"]
+[ext_resource type="PackedScene" uid="uid://bs4vdmwyvj7jk" path="res://Prefabs/card.tscn" id="5_7ug8e"]
+[ext_resource type="PackedScene" uid="uid://3ahgnxl00863" path="res://Prefabs/mana_particle.tscn" id="6_5n0nw"]
+[ext_resource type="Texture2D" uid="uid://bkdw258cyt6b7" path="res://Art/UI/mouse.png" id="7_rxq4x"]
+[ext_resource type="Script" path="res://Code/UI/MouseCursor.cs" id="8_kpt4v"]
+[ext_resource type="Texture2D" uid="uid://vr16ohjk4ys" path="res://Art/UI/mana_under.png" id="9_diibf"]
+[ext_resource type="Texture2D" uid="uid://b81byfl3yiwka" path="res://Art/UI/mana_over.png" id="10_h7lm3"]
+[ext_resource type="Script" path="res://Code/UI/ManaBar.cs" id="11_utlwo"]
+[ext_resource type="FontFile" uid="uid://d0wm58vw5uo44" path="res://Art/UI/Blocky.ttf" id="12_tuiip"]
+[ext_resource type="Script" path="res://Code/UI/CopyText.cs" id="13_yprju"]
+[ext_resource type="Texture2D" uid="uid://epuw4ke58xpn" path="res://Art/Cards/the deck that took me way too goddamn long to draw.png" id="14_1ykc8"]
+[ext_resource type="Script" path="res://Code/UI/DeckVisual.cs" id="15_jo7mm"]
+[ext_resource type="Texture2D" uid="uid://dn55aoiiptfgm" path="res://Art/Cards/numbers.png" id="16_ridv6"]
+[ext_resource type="Script" path="res://Code/UI/Number.cs" id="17_y2h24"]
+[ext_resource type="Texture2D" uid="uid://bt8veoi3xeypa" path="res://Art/UI/panel.png" id="18_gimmm"]
+[ext_resource type="Script" path="res://Code/UI/TimePanel.cs" id="19_p1gfr"]
+[ext_resource type="Texture2D" uid="uid://dkksglsfc4jdr" path="res://Art/UI/playButtons.png" id="20_5pqja"]
+[ext_resource type="Texture2D" uid="uid://bnbntn0w4scc1" path="res://Art/World/island.png" id="21_uaq8t"]
+[ext_resource type="Script" path="res://Code/Backbone/Island.cs" id="22_0ma38"]
+[ext_resource type="Script" path="res://Code/Ambient/SoundManager.cs" id="23_cbrcj"]
+[ext_resource type="AudioStream" uid="uid://bxo0rx608rock" path="res://Sound/SFX/drawCard.mp3" id="24_booyj"]
+[ext_resource type="AudioStream" uid="uid://b4enggly7o3sy" path="res://Sound/SFX/GainMana.mp3" id="25_qobe5"]
+[ext_resource type="AudioStream" uid="uid://d3efgplltc7mt" path="res://Sound/SFX/PlaceHarsh.wav" id="26_rvpcl"]
+[ext_resource type="AudioStream" uid="uid://db6honv3410gv" path="res://Sound/SFX/PlaceSoft.wav" id="27_ibs5g"]
+[ext_resource type="AudioStream" uid="uid://ds7lv8uaijn6w" path="res://Sound/Music/Cosmic Jim Jam - Lamsbottom.mp3" id="28_ntenl"]
+[ext_resource type="Texture2D" uid="uid://cdgsqqj4amj0m" path="res://Art/UI/Button.png" id="29_nhvq1"]
+[ext_resource type="Texture2D" uid="uid://b6qkacym0dieh" path="res://Art/UI/Pressed.png" id="30_6aixn"]
+[ext_resource type="Script" path="res://Code/UI/Reload.cs" id="31_q3k0n"]
+
+[sub_resource type="Theme" id="Theme_0lanc"]
+default_font = ExtResource("12_tuiip")
+default_font_size = 7
+
+[sub_resource type="Theme" id="Theme_3qwwv"]
+default_font = ExtResource("12_tuiip")
+default_font_size = 7
+
+[node name="Level" type="Node2D"]
+texture_filter = 1
+
+[node name="BG" type="Node2D" parent="."]
+script = ExtResource("1_qdgfd")
+attenuation = 0.1
+contrast = 0.2
+offset = Vector2(32, 32)
+
+[node name="TestBg" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("2_yi7xe")
+hframes = 2
+vframes = 2
+frame = 1
+script = ExtResource("3_est6y")
+baseTime = 1.0
+deviation = 2.0
+
+[node name="TestBg2" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("2_yi7xe")
+hframes = 2
+vframes = 2
+frame = 2
+script = ExtResource("3_est6y")
+baseTime = 1.0
+deviation = 2.0
+
+[node name="TestBg3" type="Sprite2D" parent="BG"]
+texture_filter = 1
+position = Vector2(32, 33)
+texture = ExtResource("2_yi7xe")
+hframes = 2
+vframes = 2
+frame = 3
+script = ExtResource("3_est6y")
+baseTime = 1.0
+deviation = 2.0
+
+[node name="Player" type="Node2D" parent="." node_paths=PackedStringArray("gameOverScreen", "manaBar", "island", "manaText", "deckVisual", "timePanel", "soundManager")]
+script = ExtResource("4_xpxmc")
+gameOverScreen = NodePath("CanvasGroup/ColorRect")
+maxMana = 10
+baseManaRegen = 1
+manaBar = NodePath("TextureProgressBar")
+island = NodePath("Island")
+cardPrefab = ExtResource("5_7ug8e")
+manaParticle = ExtResource("6_5n0nw")
+manaText = NodePath("TextureProgressBar/ManaText")
+deckVisual = NodePath("Deck")
+timePanel = NodePath("Panel")
+soundManager = NodePath("SoundManager")
+tickRate = 0.25
+
+[node name="Mouse" type="Sprite2D" parent="Player"]
+top_level = true
+z_index = 300
+texture_filter = 1
+position = Vector2(37, 23)
+texture = ExtResource("7_rxq4x")
+centered = false
+hframes = 2
+vframes = 2
+script = ExtResource("8_kpt4v")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Player"]
+z_index = 9
+texture_filter = 1
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 63.0
+offset_bottom = 10.0
+value = 100.0
+rounded = true
+nine_patch_stretch = true
+stretch_margin_left = 3
+stretch_margin_top = 3
+stretch_margin_right = 3
+stretch_margin_bottom = 3
+texture_under = ExtResource("9_diibf")
+texture_progress = ExtResource("10_h7lm3")
+script = ExtResource("11_utlwo")
+
+[node name="ManaText" type="RichTextLabel" parent="Player/TextureProgressBar"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 60.0
+offset_bottom = 8.0
+mouse_filter = 2
+theme = SubResource("Theme_0lanc")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+bbcode_enabled = true
+text = "[center]Mana:10/10[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+tab_size = 0
+shortcut_keys_enabled = false
+text_direction = 1
+
+[node name="ManaText" type="RichTextLabel" parent="Player/TextureProgressBar/ManaText" node_paths=PackedStringArray("toCopy")]
+layout_mode = 0
+offset_right = 57.0
+offset_bottom = 7.0
+mouse_filter = 2
+theme = SubResource("Theme_0lanc")
+theme_override_colors/default_color = Color(1, 1, 1, 1)
+bbcode_enabled = true
+text = "[center]Mana:10/10[/center]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+tab_size = 0
+shortcut_keys_enabled = false
+text_direction = 1
+script = ExtResource("13_yprju")
+toCopy = NodePath("..")
+
+[node name="Deck" type="Sprite2D" parent="Player" node_paths=PackedStringArray("manaCost")]
+z_index = 50
+position = Vector2(44, 39)
+texture = ExtResource("14_1ykc8")
+centered = false
+script = ExtResource("15_jo7mm")
+manaCost = NodePath("Number")
+
+[node name="Number" type="Sprite2D" parent="Player/Deck"]
+position = Vector2(4, 3)
+texture = ExtResource("16_ridv6")
+centered = false
+hframes = 4
+vframes = 3
+script = ExtResource("17_y2h24")
+
+[node name="Panel" type="Sprite2D" parent="Player" node_paths=PackedStringArray("pause", "play", "fastForward")]
+z_index = 15
+position = Vector2(7, -8)
+texture = ExtResource("18_gimmm")
+script = ExtResource("19_p1gfr")
+pause = NodePath("Pause")
+play = NodePath("Play")
+fastForward = NodePath("FastForward")
+
+[node name="Pause" type="Sprite2D" parent="Player/Panel"]
+position = Vector2(-9, -3)
+texture = ExtResource("20_5pqja")
+centered = false
+hframes = 2
+vframes = 2
+frame = 1
+
+[node name="Play" type="Sprite2D" parent="Player/Panel"]
+position = Vector2(-2, -3)
+texture = ExtResource("20_5pqja")
+centered = false
+hframes = 2
+vframes = 2
+
+[node name="FastForward" type="Sprite2D" parent="Player/Panel"]
+position = Vector2(5, -3)
+texture = ExtResource("20_5pqja")
+centered = false
+hframes = 2
+vframes = 2
+frame = 2
+
+[node name="Island" type="Sprite2D" parent="Player"]
+z_index = 10
+texture_filter = 1
+position = Vector2(4, 8)
+texture = ExtResource("21_uaq8t")
+centered = false
+script = ExtResource("22_0ma38")
+
+[node name="SoundManager" type="Node2D" parent="Player" node_paths=PackedStringArray("music")]
+script = ExtResource("23_cbrcj")
+drawSound = ExtResource("24_booyj")
+gainMana = ExtResource("25_qobe5")
+placeHarsh = ExtResource("26_rvpcl")
+placeSoft = ExtResource("27_ibs5g")
+music = NodePath("AudioStreamPlayer")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Player/SoundManager"]
+stream = ExtResource("28_ntenl")
+volume_db = -20.0
+autoplay = true
+
+[node name="CanvasGroup" type="CanvasGroup" parent="Player"]
+
+[node name="ColorRect" type="ColorRect" parent="Player/CanvasGroup"]
+z_index = 200
+offset_right = 64.0
+offset_bottom = 64.0
+color = Color(0, 0, 0, 0.470588)
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 24.0
+offset_right = 50.0
+offset_bottom = 31.0
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Game Over"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 25.0
+offset_right = 49.0
+offset_bottom = 32.0
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Game Over"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel4" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 26.0
+offset_right = 50.0
+offset_bottom = 33.0
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Game Over"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel5" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 25.0
+offset_right = 51.0
+offset_bottom = 32.0
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Game Over"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 25.0
+offset_right = 50.0
+offset_bottom = 32.0
+theme = SubResource("Theme_3qwwv")
+text = "Game Over"
+fit_content = true
+autowrap_mode = 0
+
+[node name="TextureButton" type="TextureButton" parent="Player/CanvasGroup/ColorRect"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 36.0
+offset_right = 48.0
+offset_bottom = 56.0
+texture_normal = ExtResource("29_nhvq1")
+texture_pressed = ExtResource("30_6aixn")
+script = ExtResource("31_q3k0n")
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect/TextureButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 3.0
+offset_right = 24.0
+offset_bottom = 10.0
+mouse_filter = 2
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Quit"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect/TextureButton"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 4.0
+offset_right = 23.0
+offset_bottom = 11.0
+mouse_filter = 2
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Quit"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel4" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect/TextureButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 24.0
+offset_bottom = 12.0
+mouse_filter = 2
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Quit"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel5" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect/TextureButton"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 4.0
+offset_right = 25.0
+offset_bottom = 11.0
+mouse_filter = 2
+theme = SubResource("Theme_3qwwv")
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Quit"
+fit_content = true
+autowrap_mode = 0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Player/CanvasGroup/ColorRect/TextureButton"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 24.0
+offset_bottom = 11.0
+mouse_filter = 2
+theme = SubResource("Theme_3qwwv")
+text = "Quit"
+fit_content = true
+autowrap_mode = 0

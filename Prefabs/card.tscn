@@ -11,6 +11,8 @@ texture_filter = 1
 position = Vector2(57, 64)
 texture = ExtResource("1_seevt")
 hframes = 2
+vframes = 9
+frame = 17
 script = ExtResource("2_kpu8s")
 number = NodePath("Number")
 

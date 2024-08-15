@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://c1thtsehkfgdy"]
+
+[ext_resource type="Texture2D" uid="uid://b41a62u8i3ue0" path="res://Art/Entities/BloomingTree.png" id="1_xawgw"]
+[ext_resource type="Script" path="res://Code/Gameplay/BloomingTree.cs" id="2_geowf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_24b1l"]
+atlas = ExtResource("1_xawgw")
+region = Rect2(0, 0, 6, 5)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l10e1"]
+atlas = ExtResource("1_xawgw")
+region = Rect2(0, 5, 6, 5)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jjy21"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_24b1l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l10e1")
+}],
+"loop": true,
+"name": &"default",
+"speed": 2.0
+}]
+
+[node name="Tree" type="AnimatedSprite2D"]
+position = Vector2(11, 17)
+sprite_frames = SubResource("SpriteFrames_jjy21")
+autoplay = "default"
+frame_progress = 0.957191
+offset = Vector2(0, -2.5)
+script = ExtResource("2_geowf")
